@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raufu Adelani — Interactive Resume</title>
+  <meta name="description" content="Interactive resume / e-portfolio for Raufu Adelani" />
+
+  <!-- Internal CSS (single file requirement) -->
+  <style>
+    :root{
+      --bg: #f4fbff;
+      --card: #ffffff;
+      --accent-blue: #0b63d6;
+      --accent-green: #1fa07a;
+      --muted: #6b7280;
+      --glass: rgba(255,255,255,0.6);
+      --radius: 14px;
+      --shadow: 0 6px 18px rgba(11,99,214,0.08);
+      --maxw: 980px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, rgba(11,99,214,0.06), rgba(31,160,122,0.03) 60%), var(--bg);
+      color:#0b1721;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:var(--maxw);
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    header.card{
+      grid-column:1/-1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      padding:20px;
+      background:linear-gradient(135deg,var(--card),var(--glass));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(11,99,214,0.06);
+      margin-bottom:4px;
+    }
+
+    .identity{
+      display:flex;
+      gap:16px;
+      align-items:center;
+    }
+    .avatar{
+      width:80px;height:80px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent-blue),var(--accent-green));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:26px;
+      box-shadow: 0 6px 20px rgba(31,160,122,0.12);
+    }
+    .namejob h1{
+      margin:0;font-size:20px;letter-spacing:0.2px;
+    }
+    .namejob p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{
+      background:var(--accent-blue);
+      color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;
+      box-shadow: 0 6px 12px rgba(11,99,214,0.12);
+    }
+    .btn.alt{
+      background:transparent;color:var(--accent-blue);border:1px solid rgba(11,99,214,0.12);
+    }
+    .btn.ghost{background:transparent;color:var(--muted);border:1px dashed rgba(11,99,214,0.06);}
+
+    /* Left column */
+    .card{
+      padding:18px;
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(11,99,214,0.04);
+    }
+    .left{
+      display:flex;flex-direction:column;gap:14px;height:fit-content;
+    }
+    .section-title{
+      font-size:13px;color:var(--muted);font-weight:700;margin-bottom:8px;
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .contact-list{display:flex;flex-direction:column;gap:10px;font-size:14px}
+    .contact-item{display:flex;gap:8px;align-items:center;color:#0b1721}
+    .chip{background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));color:white;padding:6px 8px;border-radius:8px;font-weight:700;font-size:12px}
+
+    /* skill bars */
+    .skill{
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .skill > div{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+    .bar{
+      height:10px;background:#e6f2ff;border-radius:8px;overflow:hidden;
+    }
+    .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));border-radius:8px;transition:width 900ms cubic-bezier(.2,.9,.2,1);}
+
+    /* right column */
+    .right{display:flex;flex-direction:column;gap:14px}
+    .headline{font-size:15px;margin:0 0 8px}
+    .summary{color:var(--muted);line-height:1.5}
+
+    .timeline{display:flex;flex-direction:column;gap:12px}
+    .entry{padding:12px;border-radius:12px;border:1px solid rgba(11,99,214,0.04);background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.9))}
+    .entry h4{margin:0 0 6px}
+    .entry p{margin:0;color:var(--muted)}
+
+    .toggle{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .expand-btn{background:transparent;border:0;color:var(--accent-blue);cursor:pointer;font-weight:700}
+
+    /* projects filter */
+    .projects-controls{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+    .search{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(11,99,214,0.06)}
+
+    /* responsive */
+    @media (max-width:900px){
+      .wrap{grid-template-columns:1fr; padding:0 12px}
+      .avatar{width:64px;height:64px}
+    }
+
+    footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:13px;margin-top:6px}
+    /* editable style */
+    [contenteditable="true"]{outline:2px dashed rgba(11,99,214,0.08);padding:2px;border-radius:6px}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="app">
+    <!-- Header -->
+    <header class="card" role="banner" aria-label="Resume header">
+      <div class="identity">
+        <div class="avatar" id="initials">RA</div>
+        <div class="namejob">
+          <h1 contenteditable="true" id="fullName">Raufu Adelani</h1>
+          <p class="small" contenteditable="true" id="headline">Computer Information Systems • Junior • Product Management Aspirant</p>
+        </div>
+      </div>
+
+      <div class="actions" aria-hidden="false">
+        <button class="btn" id="printBtn" title="Print / Save as PDF">Print / Save PDF</button>
+        <button class="btn alt" id="editToggle" aria-pressed="false">Enable Edit</button>
+        <button class="btn ghost" id="resetBtn" title="Reset to uploaded resume content">Reset</button>
+      </div>
+    </header>
+
+    <!-- Left column -->
+    <aside class="card left" aria-label="Sidebar">
+      <section>
+        <div class="section-title"><span>Contact</span><span class="small">Quick</span></div>
+        <div class="contact-list">
+          <div class="contact-item">
+            <span class="chip">Email</span>
+            <div style="flex:1">
+              <div contenteditable="true" id="email">radelani@htu.edu</div>
+              <div class="small">Click to edit • <button class="expand-btn" id="copyEmail">Copy</button></div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="chip">Phone</span>
+            <div style="flex:1">
+              <div contenteditable="true" id="phone">(737)-328-9133</div>
+              <div class="small"><button class="expand-btn" id="callBtn">Call</button> • <button class="expand-btn" id="copyPhone">Copy</button></div>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <span class="chip">Links</span>
+            <div style="flex:1">
+              <div contenteditable="true" id="links">LinkedIn | Github</div>
+              <div class="small">Put full URLs if you want them clickable</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span>Education</span></div>
+        <div class="entry small" id="education" contenteditable="true">
+          Huston-Tillotson University — Computer Information Systems (Minor: Business Administration)<br>
+          Graduation: December 2026 • GPA: 4.0
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span>Skills</span></div>
+        <div class="skill">
+          <div><strong>Python</strong><span class="small">Advanced</span></div>
+          <div class="bar"><i data-pct="92"></i></div>
+
+          <div><strong>HTML / CSS / JS</strong><span class="small">Advanced</span></div>
+          <div class="bar"><i data-pct="90"></i></div>
+
+          <div><strong>C++</strong><span class="small">Intermediate</span></div>
+          <div class="bar"><i data-pct="78"></i></div>
+
+          <div><strong>AWS / Cloud</strong><span class="small">Familiar</span></div>
+          <div class="bar"><i data-pct="64"></i></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-title"><span>Languages</span></div>
+        <div class="small">English (Fluent)<br>French (Fluent)</div>
+      </section>
+
+    </aside>
+
+    <!-- Right column -->
+    <section class="right">
+
+      <div class="card">
+        <h3 class="headline">Professional Summary</h3>
+        <div class="summary" contenteditable="true" id="summary">
+          Computer Information Systems student with hands-on experience building web apps and automated data systems. Passionate about product development, AI-driven solutions for education and social good, and delivering polished user experiences.
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 class="headline">Experience</h3>
+          <div class="small">Click a role to expand</div>
+        </div>
+
+        <div class="timeline" id="experience">
+          <article class="entry" data-expanded="false">
+            <div class="toggle">
+              <div>
+                <h4 contenteditable="true">Facility Operations Runner — CloudKitchens (Austin, TX)</h4>
+                <div class="small">Aug 2025 – Oct 2025</div>
+              </div>
+              <button class="expand-btn" aria-expanded="false">Show</button>
+            </div>
+            <div class="details small" style="margin-top:8px;display:none">
+              Organized & transported food orders with digital tracking; handled administrative ops; improved communication & logistics.
+            </div>
+          </article>
+
+          <article class="entry" data-expanded="false">
+            <div class="toggle">
+              <div>
+                <h4 contenteditable="true">Instructor — Apple Summer Coding Camp</h4>
+                <div class="small">Jun 2025</div>
+              </div>
+              <button class="expand-btn" aria-expanded="false">Show</button>
+            </div>
+            <div class="details small" style="margin-top:8px;display:none">
+              Delivered workshops on design thinking, Swift programming, and app development.
+            </div>
+          </article>
+
+          <article class="entry" data-expanded="false">
+            <div class="toggle">
+              <div>
+                <h4 contenteditable="true">Industrial Training — CI2J Informatique</h4>
+                <div class="small">Apr 2022 – Jun 2022</div>
+              </div>
+              <button class="expand-btn" aria-expanded="false">Show</button>
+            </div>
+            <div class="details small" style="margin-top:8px;display:none">
+              Hardware assessments, troubleshooting, and technical maintenance for computer systems.
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="card" id="projectsCard">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 class="headline">Projects</h3>
+          <div class="small">Filter or edit project text</div>
+        </div>
+
+        <div class="projects-controls">
+          <input class="search" id="projectSearch" placeholder="Filter projects (e.g., orphan, website, AI)"/>
+          <button class="btn alt" id="addProject">+ Add</button>
+        </div>
+
+        <div id="projectsList" class="timeline">
+          <article class="entry project" data-tags="orphan,database">
+            <div class="toggle">
+              <div>
+                <h4 contenteditable="true">Automated Orphan Records Database</h4>
+                <div class="small">Built secure record entry, retrieval and reporting to reduce manual workload.</div>
+              </div>
+              <button class="expand-btn" aria-expanded="false">Show</button>
+            </div>
+            <div class="details small" style="margin-top:8px;display:none">
+              Designed user-friendly system, implemented basic security measures for sensitive records, and created automated reports.
+            </div>
+          </article>
+
+          <article class="entry project" data-tags="school,website,html">
+            <div class="toggle">
+              <div>
+                <h4 contenteditable="true">School Website</h4>
+                <div class="small">Frontend built with HTML & JavaScript; explored C++ backend integration.</div>
+              </div>
+              <button class="expand-btn" aria-expanded="false">Show</button>
+            </div>
+            <div class="details small" style="margin-top:8px;display:none">
+              Developed interactive elements and learned web structure & deployment practices.
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="headline">Awards & Activities</h3>
+        <div class="small">
+          ● Best Graphics Designer of The Year, University of Abidjan (March 2022)<br>
+          ● Member, Apple Coding Club • Event Planner, National Association of Black Accountants
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      Resume content displayed above was loaded from your uploaded file. You can edit inline or use the buttons at the top. :contentReference[oaicite:1]{index=1}
+    </footer>
+  </main>
+
+  <!-- JavaScript (no external libraries) -->
+  <script>
+    /* === Utility / state === */
+    const stateKey = 'interactiveResume_v1';
+    const defaultData = {
+      fullName: 'Raufu Adelani',
+      initials: 'RA',
+      headline: 'Computer Information Systems • Junior • Product Management Aspirant',
+      email: 'radelani@htu.edu',
+      phone: '(737)-328-9133',
+      links: 'LinkedIn | Github',
+      education: 'Huston-Tillotson University — Computer Information Systems (Minor: Business Administration)\\nGraduation: December 2026 • GPA: 4.0',
+      summary: 'Computer Information Systems student with hands-on experience building web apps and automated data systems. Passionate about product development, AI-driven solutions for education and social good, and delivering polished user experiences.',
+    };
+
+    function qs(sel, el = document) { return el.querySelector(sel); }
+    function qsa(sel, el = document) { return Array.from(el.querySelectorAll(sel)); }
+
+    /* Load from localStorage or default */
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(stateKey);
+        return raw ? JSON.parse(raw) : defaultData;
+      }catch(e){ return defaultData; }
+    }
+
+    function saveState(data){
+      localStorage.setItem(stateKey, JSON.stringify(data));
+    }
+
+    /* Initialize UI values */
+    const appState = loadState();
+    qs('#fullName').innerText = appState.fullName;
+    qs('#initials').innerText = appState.initials || appState.fullName.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
+    qs('#headline').innerText = appState.headline;
+    qs('#email').innerText = appState.email;
+    qs('#phone').innerText = appState.phone;
+    qs('#links').innerText = appState.links;
+    qs('#education').innerText = appState.education;
+    qs('#summary').innerText = appState.summary;
+
+    /* Edit toggle */
+    const editBtn = qs('#editToggle');
+    let editing = false;
+    editBtn.addEventListener('click', ()=>{
+      editing = !editing;
+      editBtn.textContent = editing ? 'Disable Edit' : 'Enable Edit';
+      editBtn.setAttribute('aria-pressed', String(editing));
+      // toggle contenteditable on editable fields
+      qsa('[contenteditable]').forEach(el=>{
+        // allow editing of most fields except avatar initials
+        if(el.id === 'initials') return;
+        el.contentEditable = editing ? 'true' : 'false';
+      });
+      if(!editing) commitEdits();
+    });
+
+    function commitEdits(){
+      // gather changes and save
+      const newState = {
+        fullName: qs('#fullName').innerText.trim(),
+        initials: qs('#initials').innerText.trim(),
+        headline: qs('#headline').innerText.trim(),
+        email: qs('#email').innerText.trim(),
+        phone: qs('#phone').innerText.trim(),
+        links: qs('#links').innerText.trim(),
+        education: qs('#education').innerText.trim(),
+        summary: qs('#summary').innerText.trim()
+      };
+      saveState(newState);
+    }
+
+    /* Print / save PDF */
+    qs('#printBtn').addEventListener('click', ()=> {
+      // commit any edits first
+      if(editing) { commitEdits(); editing = false; editBtn.textContent = 'Enable Edit'; editBtn.setAttribute('aria-pressed','false'); qsa('[contenteditable]').forEach(el=>el.contentEditable='false'); }
+      window.print();
+    });
+
+    /* Reset to uploaded resume content (uses data from page initially populated from uploaded file) */
+    qs('#resetBtn').addEventListener('click', ()=>{
+      if(!confirm('Reset saved changes to the original uploaded resume content?')) return;
+      localStorage.removeItem(stateKey);
+      location.reload();
+    });
+
+    /* Copy actions */
+    qs('#copyEmail').addEventListener('click', ()=> {
+      navigator.clipboard?.writeText(qs('#email').innerText).then(()=>alert('Email copied'));
+    });
+    qs('#copyPhone').addEventListener('click', ()=> {
+      navigator.clipboard?.writeText(qs('#phone').innerText).then(()=>alert('Phone copied'));
+    });
+    qs('#callBtn').addEventListener('click', ()=>{
+      // open tel: on supported devices
+      window.location.href = 'tel:' + qs('#phone').innerText.replace(/[^+\d]/g,'');
+    });
+
+    /* Expandable entries */
+    qsa('.entry').forEach(entry=>{
+      const btn = entry.querySelector('.expand-btn');
+      const details = entry.querySelector('.details');
+      btn.addEventListener('click', ()=>{
+        const expanded = entry.getAttribute('data-expanded') === 'true';
+        entry.setAttribute('data-expanded', String(!expanded));
+        btn.setAttribute('aria-expanded', String(!expanded));
+        btn.textContent = expanded ? 'Show' : 'Hide';
+        details.style.display = expanded ? 'none' : 'block';
+      });
+    });
+
+    /* Animated skill bars when visible */
+    function animateSkillBars(){
+      qsa('.bar i').forEach(i=>{
+        const pct = i.dataset.pct || '70';
+        i.style.width = pct + '%';
+      });
+    }
+    // animate on load
+    window.addEventListener('load', animateSkillBars);
+
+    /* Projects: filter & add */
+    const projectSearch = qs('#projectSearch');
+    projectSearch.addEventListener('input', (e)=>{
+      const q = e.target.value.trim().toLowerCase();
+      qsa('.project').forEach(p=>{
+        const text = (p.innerText + ' ' + (p.dataset.tags||'')).toLowerCase();
+        p.style.display = text.includes(q) ? '' : 'none';
+      });
+    });
+
+    qs('#addProject').addEventListener('click', ()=>{
+      const list = qs('#projectsList');
+      const el = document.createElement('article');
+      el.className = 'entry project';
+      el.dataset.tags = '';
+      el.innerHTML = `
+        <div class="toggle">
+          <div>
+            <h4 contenteditable="true">New Project</h4>
+            <div class="small">Click to edit details...</div>
+          </div>
+          <button class="expand-btn" aria-expanded="false">Show</button>
+        </div>
+        <div class="details small" style="margin-top:8px;display:none">Describe the project here.</div>
+      `;
+      // wire expand button
+      list.prepend(el);
+      const btn = el.querySelector('.expand-btn');
+      const details = el.querySelector('.details');
+      btn.addEventListener('click', ()=>{
+        const expanded = el.getAttribute('data-expanded') === 'true';
+        el.setAttribute('data-expanded', String(!expanded));
+        btn.setAttribute('aria-expanded', String(!expanded));
+        btn.textContent = expanded ? 'Show' : 'Hide';
+        details.style.display = expanded ? 'none' : 'block';
+      });
+      // auto-enable edit mode if not already
+      if(!editing){
+        editing = true;
+        editBtn.textContent = 'Disable Edit';
+        editBtn.setAttribute('aria-pressed','true');
+        qsa('[contenteditable]').forEach(el=>el.contentEditable='true');
+      }
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    });
+
+    /* Save on leaving page */
+    window.addEventListener('beforeunload', ()=>{
+      commitEdits();
+    });
+
+    /* keyboard shortcut: Ctrl+S to save edits */
+    window.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){
+        e.preventDefault();
+        commitEdits();
+        alert('Saved to localStorage');
+      }
+    });
+
+    /* Accessibility: focus outlines when navigating by keyboard */
+    document.addEventListener('keyup', (e)=>{
+      if(e.key === 'Tab') document.body.classList.add('show-focus');
+    });
+
+    /* small helper: update initials when name changes */
+    const nameEl = qs('#fullName');
+    nameEl.addEventListener('input', ()=>{
+      const initials = nameEl.innerText.split(' ').map(x=>x.trim()[0]||'').slice(0,2).join('').toUpperCase();
+      qs('#initials').innerText = initials || 'RA';
+    });
+
+    /* Helpful tip shown to user once */
+    if(!localStorage.getItem('seenTip_v1')){
+      setTimeout(()=>{ alert('Tip: Click "Enable Edit" to edit any section inline. Press Ctrl+S to save to your browser storage.'); }, 600);
+      localStorage.setItem('seenTip_v1','1');
+    }
+
+  </script>
+</body>
+</html>
